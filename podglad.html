@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podglad artykulu</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
+</head>
+<body>
+    <div id="preview"></div>
+    <py-script>
+import asyncio
+from js import document, fetch
+
+async def load_file(file_path):
+    response = await fetch(file_path)
+    if response.ok:
+        return await response.text()
+    else:
+        raise FileNotFoundError(f"Failed to load {file_path}")
+
+async def generate_preview():
+    try:
+        article_content = await load_file('artykul.html')
+        template_content = await load_file('szablon.html')
+
+        full_content = template_content.replace("<!-- Paste article content here -->", article_content)
+
+        preview_div = document.getElementById("preview")
+        preview_div.innerHTML = full_content
+    except Exception as e:
+        print(f"Error: {e}")
+
+asyncio.ensure_future(generate_preview())
+    </py-script>
+</body>
+</html>
